@@ -16,7 +16,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons/'
 import Compras from '../components/compra';
 import Armazenamento from '../hooks/banco';
+import { useIsFocused } from '@react-navigation/native';
 import { CaixaToken } from '../components/teste';
+
 
 
 export default function Index() {
@@ -24,14 +26,15 @@ export default function Index() {
     const [modalVisible, setModalVisible] = useState(false);
     const [lista, defLista] = useState([]);
     const { obterItem, salvarItem, limpar, removerItem, generateSequentialId } = Armazenamento();
+    const telaAtiva = useIsFocused();
 
     useEffect(() => {
         carregar();
-    }, []);
+    }, [telaAtiva]);
 
     async function carregar() {
         const info = await obterItem("@info");
-        defLista(info || []);
+        defLista(info);
     }
 
     async function deletar(item) {
