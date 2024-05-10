@@ -2,14 +2,17 @@ import React from "react";
 import { Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
 import Armazenamento from "../hooks/banco";
 
-export function CaixaToken({ info, deletarToken }) {
+export function CaixaToken({ info, deletar, carregar }) {
+
+
+
     return (
         <Pressable style={ESTILOS.caixa}>
             <Text style={ESTILOS.text}>
                 {info.produto}
             </Text>
-            <TouchableOpacity onPress={deletarToken} style={ESTILOS.botao}>
-                <Text style={ESTILOS.textBotao}>Deletar</Text>
+            <TouchableOpacity  onPress={deletar} style={ESTILOS.botao}>
+                <Text style={ESTILOS.textBotao}>limpar</Text>
             </TouchableOpacity>
         </Pressable>
     );

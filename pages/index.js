@@ -15,7 +15,6 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons/'
 import Compras from '../components/compra';
-import { useIsFocused } from '@react-navigation/native';
 import Armazenamento from '../hooks/banco';
 import { CaixaToken } from '../components/teste';
 
@@ -23,37 +22,33 @@ import { CaixaToken } from '../components/teste';
 export default function Index() {
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [listaTokens, defListaTokens] = useState([]);
-    const { obterItem, removerItem, salvarItem } = Armazenamento();
+    const [lista, defLista] = useState([]);
+    const { obterItem, salvarItem, limpar, removerItem, generateSequentialId } = Armazenamento();
 
     useEffect(() => {
-        carregarTokens();
+        carregar();
     }, []);
 
-    async function carregarTokens() {
+    async function carregar() {
         const info = await obterItem("@info");
-        defListaTokens(info || []);
+        defLista(info || []);
     }
 
-    async function deletarToken(item) {
-        try {
-            const info = await removerItem("@info", item);
-            defListaTokens(info);
-            console.log("Item removido com sucesso");
-    
-        } catch (error) {
-            console.error("Erro ao tentar remover o item:", error);
-        }
-    };
-    
-    
+    async function deletar(item) {
+        console.log(item)
+        const I = item.id;
+        console.log(I);
+        limpar()
+        carregar()
+    }
 
-    async function adicionarToken(novoItem) {
-        const info = [...listaTokens, novoItem];
+    async function adicionar(novoItem) {
+        const info = [...lista, novoItem];
         await salvarItem("@info", info);
-        defListaTokens(info);
+        defLista(info);
         console.log("Item adicionado com sucesso");
     }
+
 
 
     return (
@@ -81,14 +76,16 @@ export default function Index() {
 
                 <FlatList
                     style={{ flex: 1, paddingTop: 14 }}
-                    data={listaTokens}
-                    keyExtractor={(item, index) => String(index)} // Usar o índice do item como chave única
+                    data={lista}
+                    keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
+
                         <CaixaToken
                             info={item}
-                            deletarToken={() => deletarToken(item)}  // Passar a função deletarToken como uma propriedade
-                            adicionarToken={adicionarToken} // Remover os parênteses
+                            deletar={() => deletar(item)}
+                            carregar={() => carregar()}
                         />
+
                     )}
                 />
 
@@ -100,7 +97,10 @@ export default function Index() {
                     <Ionicons name={'caret-up-outline'} size={25} color={'#fff'} />
                 </TouchableOpacity>
 
-                <Compras isVisible={modalVisible} onClose={() => setModalVisible(false)} adicionarToken={adicionarToken} />
+                <Compras
+                    isVisible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    adicionar={adicionar} />
 
             </View>
         </View>

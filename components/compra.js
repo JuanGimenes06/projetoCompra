@@ -4,21 +4,23 @@ import { Ionicons } from '@expo/vector-icons/';
 import Armazenamento from '../hooks/banco';
 
 
-
-export default function Compras({ isVisible, onClose, adicionarToken}) {
+export default function Compras({ isVisible, onClose, adicionar }) {
     const [prod, setProd] = useState('');
     const [quant, setQuant] = useState('');
     const [val, setVal] = useState('');
 
-    const { obterItem, removerItem } = Armazenamento();
+    const { obterItem, salvarItem, generateSequentialId } = Armazenamento();
 
 
-    async function salvarToken() {
-        let info = { produto: prod, quantidade: quant, valor: val }
-        info.key = prod;
-        await salvarItem("@info", info)
+
+
+    async function salvar() {
+        let ind = await generateSequentialId("@info")
+        console.log(ind)
+        let info = { id: ind, produto: prod, quantidade: quant, valor: val }
+
+        await adicionar(info);
         alert("salvo com sucesso")
-        await adicionarToken(info);
         onClose();
     }
 
@@ -26,11 +28,10 @@ export default function Compras({ isVisible, onClose, adicionarToken}) {
         if (prod === "" || quant === "" || val === "") {
             alert("Preencha")
         } else {
-            salvarToken()
+            salvar()
         }
     }
 
-    const { salvarItem } = Armazenamento();
 
 
     return (
