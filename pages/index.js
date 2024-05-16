@@ -10,7 +10,8 @@ import {
     Keyboard,
     TouchableWithoutFeedback,
     ScrollView,
-    FlatList
+    FlatList,
+    Pressable
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons/'
@@ -21,55 +22,81 @@ import { CaixaToken } from '../components/teste';
 
 
 
+
 export default function Index() {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [lista, defLista] = useState([]);
-    const { obterItem, salvarItem, limpar, removerItem, generateSequentialId } = Armazenamento();
+    const [total, defTotal] = useState(0)
+    const [atualiza, defAtualiza] = useState(false);
+
     const telaAtiva = useIsFocused();
 
+
+    const { obterItem, salvarItem, limpar, removerItem, generateSequentialId } = Armazenamento();
+
+    let soma = 0.00;
+
     useEffect(() => {
+        carregar()
+    }, [telaAtiva])
+
+    useEffect(() => {
+        calcularTotal();
+    }, [lista]);
+
+    async function atualizar(){
         carregar();
-    }, [telaAtiva]);
+        calcularTotal();
+        console.log("carregou")
+    }
 
     async function carregar() {
         const info = await obterItem("@info");
-        defLista(info);
-    }
+        defLista(info);}
 
     async function deletar(item) {
-        console.log(item)
-        const I = item.id;
-        console.log(I);
-        limpar()
-        carregar()
+        const id = item.id;
+        await removerItem("@info", id);
+        carregar()}
+
+    async function calcularTotal() {
+        if (lista.length === 0) {
+            defTotal(0.00)
+        } else {
+            const info = await obterItem("@info");
+            defLista(info);
+
+            const valores = lista.map(objeto => objeto.valor);
+            const qtde = lista.map(objeto => objeto.quantidade);
+
+            for (let i = 0; i < valores.length; i++) {
+
+                soma += valores[i] * qtde[i];
+                defTotal(soma);
+            }
+        }
     }
 
-    async function adicionar(novoItem) {
-        const info = [...lista, novoItem];
-        await salvarItem("@info", info);
-        defLista(info);
-        console.log("Item adicionado com sucesso");
-    }
 
 
 
     return (
         <View style={styles.conteiner}>
-            <View style={styles.conteinerHeader}>
 
+            <View style={styles.conteinerHeader}>
                 <View style={styles.logo}>
                     <Ionicons name={'cart-outline'} size={23} color={'#fff'} style={{ paddingRight: 5 }} />
                     <Text style={styles.text}>Listas de Compras</Text>
                 </View>
-
             </View>
+
             <View style={styles.conteinerInfo}>
                 <View style={styles.linha}></View>
 
                 <View style={styles.textos}>
                     <Text style={styles.textBlack} >Total da compra:</Text>
-                    <Text style={styles.textBlack} >R$ XX.XX</Text>
+                    <Text style={styles.textBlack} >R${total}</Text>
                 </View>
 
                 <View style={styles.linha}></View>
@@ -82,13 +109,10 @@ export default function Index() {
                     data={lista}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
-
                         <CaixaToken
                             info={item}
                             deletar={() => deletar(item)}
-                            carregar={() => carregar()}
                         />
-
                     )}
                 />
 
@@ -103,7 +127,10 @@ export default function Index() {
                 <Compras
                     isVisible={modalVisible}
                     onClose={() => setModalVisible(false)}
-                    adicionar={adicionar} />
+                    carregar={() => carregar()}
+                // defAtualiza={defAtualiza}
+
+                />
 
             </View>
         </View>

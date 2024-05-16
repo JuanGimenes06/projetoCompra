@@ -4,10 +4,10 @@ import { Ionicons } from '@expo/vector-icons/';
 import Armazenamento from '../hooks/banco';
 
 
-export default function Compras({ isVisible, onClose, adicionar }) {
-    const [prod, setProd] = useState('');
-    const [quant, setQuant] = useState('');
-    const [val, setVal] = useState('');
+export default function Compras({ isVisible, onClose, carregar }) {
+    const [produto, setProduto] = useState('');
+    const [quantidade, setQuantidade] = useState('');
+    const [valor, setValor] = useState('');
 
     const { obterItem, salvarItem, generateSequentialId } = Armazenamento();
 
@@ -15,17 +15,15 @@ export default function Compras({ isVisible, onClose, adicionar }) {
 
 
     async function salvar() {
-        let ind = await generateSequentialId("@info")
-        console.log(ind)
-        let info = { id: ind, produto: prod, quantidade: quant, valor: val }
-
-        await adicionar(info);
-        alert("salvo com sucesso")
+        let index = await generateSequentialId("@info")
+        let info = { id: index, produto: produto, quantidade: quantidade, valor: valor }
+        await salvarItem("@info", info);
+        carregar()
         onClose();
     }
 
     async function enviar() {
-        if (prod === "" || quant === "" || val === "") {
+        if (produto === "" || quantidade === "" || valor === "") {
             alert("Preencha")
         } else {
             salvar()
@@ -47,31 +45,35 @@ export default function Compras({ isVisible, onClose, adicionar }) {
                     <TextInput
                         style={styles.input}
                         placeholder="Nome do produto"
-                        value={prod}
-                        onChangeText={setProd}
+                        value={produto}
+                        onChangeText={setProduto}
                     />
+                </View>
+                <View style={styles.quantidadeContainer}>
                     <TextInput
-                        style={styles.input}
+                        style={styles.inputQ}
                         placeholder="Quantidade"
-                        value={quant}
+                        value={quantidade}
                         onChangeText={text => {
-                            setQuant(text);
+                            setQuantidade(text);
                             // Adicione aqui a lógica para calcular o valor com base na quantidade
                             // e atualizar o estado do valor
                         }}
                         keyboardType="numeric"
                     />
                     <TextInput
-                        style={styles.input}
+                        style={styles.inputV}
                         placeholder="Valor"
-                        value={val}
-                        onChangeText={setVal}
+                        value={valor}
+                        onChangeText={setValor}
                         keyboardType="numeric"
                     />
                 </View>
-                <Pressable style={styles.adicionarButton} onPress={() => enviar()}>
-                    <Text style={styles.buttonText}>Adicionar</Text>
-                </Pressable>
+                <View style={styles.adicionarButton}>
+                    <Pressable style={styles.adicionarButton} onPress={() => enviar()}>
+                        <Text style={styles.buttonText}>Adicionar</Text>
+                    </Pressable>
+                </View>
             </View>
         </Modal>
     );
@@ -104,9 +106,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     inputContainer: {
-        marginBottom: 20,
+        marginBottom: 5,
     },
     input: {
+        height: 40,
         backgroundColor: '#fff',
         borderRadius: 8,
         paddingHorizontal: 10,
@@ -115,12 +118,35 @@ const styles = StyleSheet.create({
     adicionarButton: {
         backgroundColor: '#047A00',
         borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: 'center',
+        width: "62%",
+        paddingVertical: 10,
+        marginLeft: 80,
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+        marginRight: 18,
     },
-});
+    quantidadeContainer: {
+        marginBottom: 15,
+        flexDirection: "row"
+    },
+    inputV: {
+        height: 40,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        width: "50%",
+        paddingHorizontal: 10,
+        marginBottom: 10,
+        marginLeft: 15,
+    },
+    inputQ: {
+        height: 40,
+        backgroundColor: '#fff',
+        width: "45%",
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+    },
+})

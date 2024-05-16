@@ -1,46 +1,85 @@
 import React from "react";
-import { Text, StyleSheet, Pressable, TouchableOpacity } from "react-native";
-import Armazenamento from "../hooks/banco";
+import { Text, StyleSheet, Pressable, View } from "react-native";
+import { Ionicons } from '@expo/vector-icons/';
 
-export function CaixaToken({ info, deletar, carregar }) {
-
-
-
+export function CaixaToken({ info, deletar }) {
     return (
-        <Pressable style={ESTILOS.caixa}>
-            <Text style={ESTILOS.text}>
-                {info.produto}
-            </Text>
-            <TouchableOpacity  onPress={deletar} style={ESTILOS.botao}>
-                <Text style={ESTILOS.textBotao}>limpar</Text>
-            </TouchableOpacity>
-        </Pressable>
+        <View style={ESTILOS.container}>
+            <Pressable style={ESTILOS.caixa}>
+                <Text style={ESTILOS.text}>
+                    {info.produto}
+                </Text>
+                <Pressable onPress={deletar}>
+                    <Ionicons name={'close-outline'} size={23} color={'#FF0000'} />
+                </Pressable>
+            </Pressable>
+
+            <View style={ESTILOS.valorContainer}>
+                <Text style={ESTILOS.label}>Valor:</Text>
+                <Text style={ESTILOS.valor}>
+                    R${info.valor}
+                </Text>
+            </View>
+            <View style={ESTILOS.quantidadeContainer}>
+                <Text style={ESTILOS.label}>Quantidade:</Text>
+                <Text style={ESTILOS.quantidade}>
+                    {info.quantidade}
+                </Text>
+            </View>
+        </View>
     );
 }
 
 const ESTILOS = StyleSheet.create({
-    caixa: {
-        backgroundColor: "#0f0f0f",
-        padding: 14,
-        width: "100%",
-        marginBottom: 14,
-        borderRadius: 8,
+    container: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between"
+        marginLeft: 20,
+        marginRight: 20,
+        marginBottom: 16,
     },
-    botao: {
-        backgroundColor: "#FFF",
-        width: 50,
-        height: 50,
+    caixa: {
+        backgroundColor: "#CACACA",
+        height: 75,
+        padding: 14,
+        width: "55%", // ajuste a largura conforme necessário
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 25
+        justifyContent: "space-between",
+        borderRadius: 6,
+        marginBottom: 5,
+        marginTop: 10,
     },
     text: {
-        color: "#fff"
+        fontSize: 20,
+        color: "#000000"
     },
-    textBotao: {
-        color: "#000"
-    }
+    quantidadeContainer: {
+        flexDirection: "column",
+        alignItems: "center", // centraliza os elementos no contêiner
+        marginLeft: 25, // ajuste o espaço entre a caixa e o valor conforme necessário
+    },
+    valorContainer: {
+        flexDirection: "column",
+        alignItems: "center", // centraliza os elementos no contêiner
+        marginLeft: 45, // ajuste o espaço entre a caixa e o valor conforme necessário
+    },
+    label: {
+        fontSize: 12,
+        color: "#000000",
+        marginBottom: 2, // adicione uma pequena margem inferior para separar a label do valor
+    },
+    valor: {
+        fontSize: 14,
+        color: "#000000",
+    },
 });
+
+
+
+
+
+
+
+
+

@@ -25,7 +25,7 @@ export default function Armazenamento() {
         }
     }
 
-    
+
 
     async function limpar() {
         try {
@@ -36,11 +36,11 @@ export default function Armazenamento() {
         }
     }
 
-    async function removerItem(chave, item) {
+    async function removerItem(chave, index) {
         try {
             let banco = await obterItem(chave);
-            let bancoAtualizado = banco.filter((token) => {
-                return (token !== item)
+            let bancoAtualizado = banco.filter((item) => {
+                return (item.id !== index)
             })
             await AsyncStorage.setItem(chave, JSON.stringify(bancoAtualizado))
             return bancoAtualizado;
@@ -64,12 +64,23 @@ export default function Armazenamento() {
             // Incrementar o ID baseado no número de objetos existentes
             const novoId = objetosExistente.length + 1;
 
+            // Verificar se o novo ID é único
+            if (objetosExistente.some(objeto => objeto.id === novoId)) {
+                // Se o novo ID já existe, gere um novo ID até encontrar um único
+                let novoIdUnico = novoId + 1;
+                while (objetosExistente.some(objeto => objeto.id === novoIdUnico)) {
+                    novoIdUnico++;
+                }
+                return novoIdUnico;
+            }
+
             return novoId;
         } catch (error) {
             console.error('Erro ao gerar ID sequencial:', error);
             throw error;
         }
     }
+
 
 
 
