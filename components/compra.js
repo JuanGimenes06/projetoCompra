@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal, View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons/';
 import Armazenamento from '../hooks/banco';
+import { useCallback } from 'react';
+import { useFonts } from 'expo-font';
 
 
 export default function Compras({ isVisible, onClose, carregar }) {
@@ -9,16 +11,21 @@ export default function Compras({ isVisible, onClose, carregar }) {
     const [quantidade, setQuantidade] = useState('');
     const [valor, setValor] = useState('');
 
-    const { obterItem, salvarItem, generateSequentialId } = Armazenamento();
+    const { salvarItem, generateSequentialId } = Armazenamento();
 
+    useFonts({ 'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf') });
 
 
 
     async function salvar() {
         let index = await generateSequentialId("@info")
+        console.log(index)
         let info = { id: index, produto: produto, quantidade: quantidade, valor: valor }
         await salvarItem("@info", info);
-        carregar()
+        await carregar();
+
+        alert("salvo com sucesso")
+
         onClose();
     }
 
@@ -32,6 +39,9 @@ export default function Compras({ isVisible, onClose, carregar }) {
 
 
 
+    
+
+
     return (
         <Modal animationType="slide" transparent={true} visible={isVisible} style={styles.conteiner}>
             <View style={styles.fundo}></View>
@@ -41,14 +51,19 @@ export default function Compras({ isVisible, onClose, carregar }) {
                         <Ionicons name={'caret-down-outline'} size={25} color={'#fff'} />
                     </Pressable>
                 </View>
+
+                <Text style={styles.title1}>Adicionar</Text>
+                <Text style={styles.subtitle}>Produtos</Text>
+
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        placeholder="Nome do produto"
+                        placeholder="Escreva aqui o nome do produto"
                         value={produto}
                         onChangeText={setProduto}
                     />
                 </View>
+
                 <View style={styles.quantidadeContainer}>
                     <TextInput
                         style={styles.inputQ}
@@ -63,17 +78,22 @@ export default function Compras({ isVisible, onClose, carregar }) {
                     />
                     <TextInput
                         style={styles.inputV}
-                        placeholder="Valor"
+                        placeholder="Valor por unidade"
                         value={valor}
                         onChangeText={setValor}
                         keyboardType="numeric"
                     />
                 </View>
-                <View style={styles.adicionarButton}>
-                    <Pressable style={styles.adicionarButton} onPress={() => enviar()}>
-                        <Text style={styles.buttonText}>Adicionar</Text>
+
+
+                <View style={styles.central}>
+                    <Pressable onPress={() => enviar()}>
+                        <View style={styles.adicionarButton}>
+                            <Ionicons  name={'checkmark-outline'} size={30} color={'#000000'} />
+                        </View>
                     </Pressable>
                 </View>
+
             </View>
         </Modal>
     );
@@ -86,9 +106,13 @@ const styles = StyleSheet.create({
     fundo: {
         flex: 1,
     },
+    central: {
+        justifyContent: "center",
+        width: "100%",
+    },
     modalContent: {
         flex: 1,
-        backgroundColor: '#7A0300',
+        backgroundColor: '#D24343',
         borderTopRightRadius: 18,
         borderTopLeftRadius: 18,
         paddingTop: 20,
@@ -98,12 +122,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 5,
     },
     title: {
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',
+        fontFamily: "Inder",
+    },
+    title1: {
+        color: '#fff',
+        fontSize: 20,
+        fontFamily: "Inder",
+
+    },
+    subtitle: {
+        color: '#fff',
+        marginBottom: 15,
+        fontFamily: "Inder",
+
     },
     inputContainer: {
         marginBottom: 5,
@@ -114,13 +151,15 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         paddingHorizontal: 10,
         marginBottom: 10,
+        elevation: 10,
     },
     adicionarButton: {
-        backgroundColor: '#047A00',
+        backgroundColor: '#F0F0F0',
         borderRadius: 8,
-        width: "62%",
-        paddingVertical: 10,
-        marginLeft: 80,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 60,
+
     },
     buttonText: {
         color: '#fff',
@@ -130,23 +169,30 @@ const styles = StyleSheet.create({
     },
     quantidadeContainer: {
         marginBottom: 15,
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent: "space-between",
     },
     inputV: {
         height: 40,
         backgroundColor: '#fff',
         borderRadius: 8,
-        width: "50%",
+        width: "49%",
         paddingHorizontal: 10,
-        marginBottom: 10,
-        marginLeft: 15,
+        elevation: 10,
+
     },
     inputQ: {
         height: 40,
         backgroundColor: '#fff',
-        width: "45%",
+        width: "49%",
         borderRadius: 8,
         paddingHorizontal: 10,
-        marginBottom: 10,
+        elevation: 10,
+
     },
-})
+    central: {
+        justifyContent: "center",
+        flexDirection: "row",
+        marginTop: 10,
+    }
+});

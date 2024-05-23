@@ -1,25 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
+// import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
     StyleSheet,
-    TextInput,
     TouchableOpacity,
-    KeyboardAvoidingView,
-    Keyboard,
-    TouchableWithoutFeedback,
-    ScrollView,
     FlatList,
-    Pressable
+    Pressable,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons/'
 import Compras from '../components/compra';
 import Armazenamento from '../hooks/banco';
-import { useIsFocused } from '@react-navigation/native';
 import { CaixaToken } from '../components/teste';
+import { useCallback } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
+SplashScreen.preventAutoHideAsync();
 
 
 
@@ -27,38 +24,31 @@ export default function Index() {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [lista, defLista] = useState([]);
-    const [total, defTotal] = useState(0)
-    const [atualiza, defAtualiza] = useState(false);
-
-    const telaAtiva = useIsFocused();
+    const [total, defTotal] = useState(0);
 
 
-    const { obterItem, salvarItem, limpar, removerItem, generateSequentialId } = Armazenamento();
+
+    const { obterItem, removerItem } = Armazenamento();
 
     let soma = 0.00;
 
-    useEffect(() => {
-        carregar()
-    }, [telaAtiva])
+    // const [fontsLoaded, fontError] = useFonts({
+    //     'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf'),
+    // });
 
-    useEffect(() => {
-        calcularTotal();
-    }, [lista]);
+    // const onLayoutRootView = useCallback(async () => {
+    //     if (fontsLoaded || fontError) {
+    //         await SplashScreen.hideAsync();
+    //         carregar();
+    //     }
+    // }, [fontsLoaded, fontError]);
 
-    async function atualizar(){
-        carregar();
-        calcularTotal();
-        console.log("carregou")
-    }
+    // if (!fontsLoaded && !fontError) {
+    //     return null;
+    // }
 
-    async function carregar() {
-        const info = await obterItem("@info");
-        defLista(info);}
+    useFonts({ 'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf') });
 
-    async function deletar(item) {
-        const id = item.id;
-        await removerItem("@info", id);
-        carregar()}
 
     async function calcularTotal() {
         if (lista.length === 0) {
@@ -78,14 +68,37 @@ export default function Index() {
         }
     }
 
+    async function carregar() {
+        const info = await obterItem("@info");
+        defLista(info);
+    }
+
+
+
+    // useEffect(() => {
+    //     calcularTotal();
+    // }, [lista]);
+
+
+
+
+
+    async function deletar(item) {
+        const id = item.id;
+        await removerItem("@info", id);
+        carregar()
+    }
+
+
+
 
 
 
     return (
-        <View style={styles.conteiner}>
+        <View style={styles.conteiner} >
 
             <View style={styles.conteinerHeader}>
-                <View style={styles.logo}>
+                <View style={styles.logo} >
                     <Ionicons name={'cart-outline'} size={23} color={'#fff'} style={{ paddingRight: 5 }} />
                     <Text style={styles.text}>Listas de Compras</Text>
                 </View>
@@ -96,7 +109,7 @@ export default function Index() {
 
                 <View style={styles.textos}>
                     <Text style={styles.textBlack} >Total da compra:</Text>
-                    <Text style={styles.textBlack} >R${total}</Text>
+                    <Text style={styles.textBold} >R${total}</Text>
                 </View>
 
                 <View style={styles.linha}></View>
@@ -112,6 +125,8 @@ export default function Index() {
                         <CaixaToken
                             info={item}
                             deletar={() => deletar(item)}
+
+
                         />
                     )}
                 />
@@ -141,10 +156,11 @@ export default function Index() {
 const styles = StyleSheet.create({
     conteiner: {
         flex: 1,
+        backgroundColor: "#f0f0f0",
     },
     conteinerHeader: {
         flex: 2 / 3,
-        backgroundColor: "#7A0300",
+        backgroundColor: "#D24343",
         flexDirection: "row",
         alignItems: "center",
         paddingLeft: 10,
@@ -169,11 +185,11 @@ const styles = StyleSheet.create({
     },
     conteinerMain: {
         flex: 5,
-        backgroundColor: "#fff",
+        backgroundColor: "#f0f0f0",
     },
     conteinerFooter: {
         flex: 1 / 2,
-        backgroundColor: "#7A0300",
+        backgroundColor: "#D24343",
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         alignItems: "center",
@@ -190,16 +206,24 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
+        fontFamily: "Inder",
         color: "#fff",
     },
     textBlack: {
         fontSize: 16,
+        fontFamily: "Inder",
+        color: "#000",
+    },
+    textBold: {
+        fontSize: 16,
+        fontFamily: "Inder",
+        fontWeight: "bold",
         color: "#000",
     },
     linha: {
         width: "100%",
         height: 2,
-        backgroundColor: "#7A0300",
+        backgroundColor: "#D24343",
 
     }
 });
