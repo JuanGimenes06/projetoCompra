@@ -14,9 +14,8 @@ import Armazenamento from '../hooks/banco';
 import { CaixaToken } from '../components/teste';
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import Edita from '../components/editing';
 
-SplashScreen.preventAutoHideAsync();
 
 
 
@@ -25,6 +24,7 @@ export default function Index() {
     const [modalVisible, setModalVisible] = useState(false);
     const [lista, defLista] = useState([]);
     const [total, defTotal] = useState(0);
+    const [visible, setVisible] = useState(false)
 
 
 
@@ -47,7 +47,7 @@ export default function Index() {
     //     return null;
     // }
 
-    useFonts({ 'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf') });
+
 
 
     async function calcularTotal() {
@@ -73,11 +73,13 @@ export default function Index() {
         defLista(info);
     }
 
+    useEffect(() => {
+        carregar()
+    }, []);
 
-
-    // useEffect(() => {
-    //     calcularTotal();
-    // }, [lista]);
+    useEffect(() => {
+        calcularTotal();
+    }, [lista]);
 
 
 
@@ -147,6 +149,11 @@ export default function Index() {
 
                 />
 
+                <Edita
+                    isVisible={visible}
+                    onClose={() => setVisible(false)}
+                />
+
             </View>
         </View>
     );
@@ -206,17 +213,17 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
-        fontFamily: "Inder",
+        // fontFamily: "Inder",
         color: "#fff",
     },
     textBlack: {
         fontSize: 16,
-        fontFamily: "Inder",
+        // fontFamily: "Inder",
         color: "#000",
     },
     textBold: {
         fontSize: 16,
-        fontFamily: "Inder",
+        // fontFamily: "Inder",
         fontWeight: "bold",
         color: "#000",
     },

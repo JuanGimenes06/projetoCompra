@@ -13,7 +13,6 @@ export default function Compras({ isVisible, onClose, carregar }) {
 
     const { salvarItem, generateSequentialId } = Armazenamento();
 
-    useFonts({ 'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf') });
 
 
 
@@ -128,18 +127,15 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',
-        fontFamily: "Inder",
     },
     title1: {
         color: '#fff',
         fontSize: 20,
-        fontFamily: "Inder",
 
     },
     subtitle: {
         color: '#fff',
         marginBottom: 15,
-        fontFamily: "Inder",
 
     },
     inputContainer: {

@@ -5,10 +5,6 @@ import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 
 export function CaixaToken({ info, deletar }) {
-    useFonts({ 'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf') });
-
-
-    
 
     return (
         <View style={ESTILOS.container}>
@@ -68,17 +64,14 @@ const ESTILOS = StyleSheet.create({
         fontSize: 10,
         opacity: 0.5,
         color: "#000",
-        fontFamily: "Inder",
     },
     texto: {
         fontSize: 15,
         color: "#000",
-        fontFamily: "Inder",
     },
     textoB: {
         fontSize: 10,
         color: "#000",
-        fontFamily: "Inder",
     },
     botaoEditar: {
         backgroundColor: "#f0f0f0",
