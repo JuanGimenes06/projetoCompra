@@ -1,10 +1,25 @@
-import React from "react";
+
 import { Text, StyleSheet, Pressable, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons/';
 import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
+import Edita from "./editing";
+import React, { useState, useEffect } from 'react';
+import Armazenamento from "../hooks/banco";
 
-export function CaixaToken({ info, deletar }) {
+
+export function CaixaToken({ info, deletar, carregar, calcular, editando }) {
+
+    const [visible, setVisible] = useState(false)
+    const { obterItem, removerItem, salvarItem } = Armazenamento();
+
+
+
+    async function cola(id, produto, valor, quantidade){
+        await editando(id,produto,valor,quantidade)
+    }
+
+
 
     return (
         <View style={ESTILOS.container}>
@@ -20,7 +35,7 @@ export function CaixaToken({ info, deletar }) {
                     </View>
                 </View>
                 <View style={ESTILOS.botoes}>
-                    <Pressable >
+                    <Pressable onPress={() => setVisible(true)}>
                         <View style={ESTILOS.botaoEditar}>
                             <Text style={ESTILOS.textoB}>Editar</Text>
                         </View>
@@ -32,6 +47,15 @@ export function CaixaToken({ info, deletar }) {
                     </Pressable>
                 </View>
             </View>
+
+
+            <Edita
+                isVisible={visible}
+                onClose={() => setVisible(false)}
+                editando={(id, produto, quantidade, valor) => cola(id, produto, quantidade, valor)}
+                info={info}
+            />
+
         </View>
     );
 }
@@ -61,16 +85,16 @@ const ESTILOS = StyleSheet.create({
         justifyContent: "space-around",
     },
     mensagem: {
-        fontSize: 10,
+        fontSize: 12,
         opacity: 0.5,
         color: "#000",
     },
     texto: {
-        fontSize: 15,
+        fontSize: 17,
         color: "#000",
     },
     textoB: {
-        fontSize: 10,
+        fontSize: 13,
         color: "#000",
     },
     botaoEditar: {

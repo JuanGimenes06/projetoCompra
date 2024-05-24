@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useFonts } from 'expo-font';
 
 
-export default function Compras({ isVisible, onClose, carregar }) {
+export default function Compras({ isVisible, onClose, carregar, calcular }) {
     const [produto, setProduto] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [valor, setValor] = useState('');
@@ -22,6 +22,7 @@ export default function Compras({ isVisible, onClose, carregar }) {
         let info = { id: index, produto: produto, quantidade: quantidade, valor: valor }
         await salvarItem("@info", info);
         await carregar();
+        await calcular();
 
         alert("salvo com sucesso")
 

@@ -3,29 +3,37 @@ import { Modal, View, Text, Pressable, StyleSheet, TextInput } from 'react-nativ
 import { Ionicons } from '@expo/vector-icons/';
 import Armazenamento from '../hooks/banco';
 
-export default function Edita({ isVisible, onClose, carregar }) {
+export default function Edita({ isVisible, onClose, editando, info }) {
     const [produto, setProduto] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [valor, setValor] = useState('');
 
-    const { obterItem, salvarItem, generateSequentialId } = Armazenamento();
+    const { obterItem, removerItem, limpar } = Armazenamento();
 
 
-    async function editar() {
+    
         
+    async function editar() {
+        if (produto === "" || quantidade === "" || valor === "") {
+            alert("Preencha tudo")
+        } else {
+            const id = info.id;
+            await editando(id, produto, quantidade, valor)
+            alert("Item editado com sucesso")
+            onClose()
+        }
+
     }
 
     return (
-        <Modal transparent={true} visible={isVisible} onRequestClose={onClose}>
+        <Modal animationType='fade' transparent={true} visible={isVisible} onRequestClose={onClose}>
             <View style={styles.overlay}>
                 <View style={styles.modalContent}>
                     <View style={styles.titleContainer}>
-                        <Pressable onPress={onClose}>
-                            <Ionicons name={'caret-down-outline'} size={25} color={'#fff'} />
-                        </Pressable>
+                        <Text style={styles.title1}>Editar item</Text>
                         {/* RETIRAR DEPOIS A SETINHA PARA CONFIGURAR ESTE MODAL */}
                     </View>
-                    <Text style={styles.title1}>Editar item</Text>
+
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
@@ -50,9 +58,17 @@ export default function Edita({ isVisible, onClose, carregar }) {
                             keyboardType="numeric"
                         />
                     </View>
-                    <View style={styles.adicionarButton}>
-                        <Pressable style={styles.adicionarButton} onPress={() => enviar()}>
-                            <Ionicons style={styles.icone} name={'checkmark-outline'} size={30} color={'#000000'} />
+                    <View style={styles.conteinerButton}>
+                        <Pressable onPress={() => editar()}>
+                            <View style={styles.adicionarButton} >
+                                <Ionicons style={styles.icone} name={'checkmark-outline'} size={30} color={'#000000'} />
+                            </View>
+                        </Pressable>
+
+                        <Pressable onPress={onClose}>
+                            <View style={styles.voltarButton} >
+                                <Ionicons style={styles.icone} name={'close-outline'} size={30} color={'#000000'} />
+                            </View>
                         </Pressable>
                     </View>
                 </View>
@@ -75,14 +91,13 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     titleContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 5,
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        marginBottom: 20,
     },
     title1: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: 25,
     },
     subtitle: {
         color: '#fff',
@@ -91,43 +106,59 @@ const styles = StyleSheet.create({
     inputContainer: {
         marginBottom: 5,
     },
+    conteinerButton: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center"
+    },
     input: {
-        height: 40,
+        height: 35,
         backgroundColor: '#fff',
         borderRadius: 8,
         paddingHorizontal: 10,
         marginBottom: 10,
+        elevation: 10,
     },
     adicionarButton: {
         backgroundColor: '#F0F0F0',
         borderRadius: 8,
-        width: '42%',
-        paddingVertical: 1,
-        alignSelf: 'center',
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 40,
+
+    },
+    voltarButton: {
+        backgroundColor: '#FFD7D7',
+        borderRadius: 8,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 40,
     },
     icone: {
         textAlign: 'center',
     },
     quantidadeContainer: {
         marginBottom: 15,
+        justifyContent: "space-between",
         flexDirection: 'row',
     },
     inputV: {
-        height: 40,
+        height: 35,
         backgroundColor: '#fff',
         borderRadius: 8,
-        width: '50%',
+        width: '48%',
         paddingHorizontal: 10,
         marginBottom: 10,
-        marginLeft: 15,
+        elevation: 10,
+
     },
     inputQ: {
-        height: 40,
+        height: 35,
         backgroundColor: '#fff',
-        width: '45%',
+        width: '48%',
         borderRadius: 8,
         paddingHorizontal: 10,
         marginBottom: 10,
+        elevation: 10,
     },
 });
-    

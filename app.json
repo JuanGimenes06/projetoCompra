@@ -2,14 +2,14 @@
   "expo": {
     "name": "projetoCompra",
     "slug": "projetoCompra",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/img/splash.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/img/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#Fff"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,15 +19,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/img/splash.png",
+        "backgroundColor": "#ffffff",
+        "versionCode":2
+      },
+      "package": "com.juangimenes.projetoCompra"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5919eac6-e395-43a8-801d-dc50a312ea75"
+      }
+    }
   }
 }

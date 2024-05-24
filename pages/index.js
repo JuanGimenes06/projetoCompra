@@ -1,4 +1,4 @@
-// import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import {
     View,
@@ -24,13 +24,11 @@ export default function Index() {
     const [modalVisible, setModalVisible] = useState(false);
     const [lista, defLista] = useState([]);
     const [total, defTotal] = useState(0);
-    const [visible, setVisible] = useState(false)
 
 
 
-    const { obterItem, removerItem } = Armazenamento();
+    const { obterItem, removerItem, limpar, salvarItem } = Armazenamento();
 
-    let soma = 0.00;
 
     // const [fontsLoaded, fontError] = useFonts({
     //     'Inder': require('../assets/fonts/Inder/Inder-Regular.ttf'),
@@ -50,23 +48,7 @@ export default function Index() {
 
 
 
-    async function calcularTotal() {
-        if (lista.length === 0) {
-            defTotal(0.00)
-        } else {
-            const info = await obterItem("@info");
-            defLista(info);
 
-            const valores = lista.map(objeto => objeto.valor);
-            const qtde = lista.map(objeto => objeto.quantidade);
-
-            for (let i = 0; i < valores.length; i++) {
-
-                soma += valores[i] * qtde[i];
-                defTotal(soma);
-            }
-        }
-    }
 
     async function carregar() {
         const info = await obterItem("@info");
@@ -75,11 +57,34 @@ export default function Index() {
 
     useEffect(() => {
         carregar()
+        calcularTotal()
     }, []);
 
-    useEffect(() => {
-        calcularTotal();
-    }, [lista]);
+    async function calcularTotal() {
+
+        const info = await obterItem("@info");
+
+        if (info.length === 0) {
+            defTotal(0)
+        }
+        else {
+            
+
+            const valores = info.map(objeto => objeto.valor);
+            const qtde = info.map(objeto => objeto.quantidade);
+            soma = 0;
+            
+
+            for (let i = 0; i < valores.length; i++) {
+                console.log(i + " Soma é igual " + valores[i] + " * " + qtde[i])
+                soma += valores[i] * qtde[i];
+                console.log(soma)
+
+            }
+            defTotal(soma);
+
+        }
+    }
 
 
 
@@ -89,15 +94,42 @@ export default function Index() {
         const id = item.id;
         await removerItem("@info", id);
         carregar()
+        calcularTotal()
     }
 
 
+    async function editar( id , produto, valor, quantidade) {
+            const info = await obterItem("@info");
+            for (let i = 0; i < info.length; i++) {
+                console.log(info[i].id + " === " +id) 
+
+
+                if (info[i].id === id) {
+                    
+                    info[i].produto = produto;
+                    info[i].valor = Number(valor);
+                    info[i].quantidade = Number(quantidade);
+
+
+                    // await salvarItem("@info", info)
+                    defLista(info)
+                    await carregar();
+                    await calcularTotal()
+
+                }
+            }
+
+    }
 
 
 
 
     return (
         <View style={styles.conteiner} >
+
+            <StatusBar
+            
+            />
 
             <View style={styles.conteinerHeader}>
                 <View style={styles.logo} >
@@ -127,8 +159,9 @@ export default function Index() {
                         <CaixaToken
                             info={item}
                             deletar={() => deletar(item)}
-
-
+                            carregar={() => carregar()}
+                            calcular={() => calcularTotal()}
+                            editando={(id, produto, valor, quantidade) => editar(id, produto, valor, quantidade)}
                         />
                     )}
                 />
@@ -145,14 +178,12 @@ export default function Index() {
                     isVisible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     carregar={() => carregar()}
+                    calcular={() => calcularTotal()}
                 // defAtualiza={defAtualiza}
 
                 />
 
-                <Edita
-                    isVisible={visible}
-                    onClose={() => setVisible(false)}
-                />
+
 
             </View>
         </View>
