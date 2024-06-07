@@ -81,7 +81,24 @@ export default function Armazenamento() {
         }
     }
 
-    
+    async function editarItem(chave, index, info) {
+        try {
+            let banco = await obterItem(chave);
+            let bancoAtualizado = banco.map((item) => {
+                if (item.id === index){
+                    return { ...item , ...info}
+                }
+            })
+            console.log(banco)
+            console.log(bancoAtualizado)
+
+            await AsyncStorage.setItem(chave, JSON.stringify(bancoAtualizado))
+            return bancoAtualizado;
+
+        } catch (erro) {
+            alert("Erro ao remover item", erro)
+        }
+    }
 
 
 
@@ -92,6 +109,7 @@ export default function Armazenamento() {
         limpar,
         removerItem,
         generateSequentialId,
+        editarItem
 
     }
 }

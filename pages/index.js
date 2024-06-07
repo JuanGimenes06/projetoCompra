@@ -27,7 +27,7 @@ export default function Index() {
 
 
 
-    const { obterItem, removerItem, limpar, salvarItem } = Armazenamento();
+    const { obterItem, removerItem, limpar, salvarItem, editarItem } = Armazenamento();
 
 
     // const [fontsLoaded, fontError] = useFonts({
@@ -45,7 +45,7 @@ export default function Index() {
     //     return null;
     // }
 
-
+    const alturaStatusBar = StatusBar.currentHeight
 
 
 
@@ -68,17 +68,15 @@ export default function Index() {
             defTotal(0)
         }
         else {
-            
+
 
             const valores = info.map(objeto => objeto.valor);
             const qtde = info.map(objeto => objeto.quantidade);
             soma = 0;
-            
+
 
             for (let i = 0; i < valores.length; i++) {
-                console.log(i + " Soma é igual " + valores[i] + " * " + qtde[i])
                 soma += valores[i] * qtde[i];
-                console.log(soma)
 
             }
             defTotal(soma);
@@ -98,26 +96,25 @@ export default function Index() {
     }
 
 
-    async function editar( id , produto, valor, quantidade) {
-            const info = await obterItem("@info");
-            for (let i = 0; i < info.length; i++) {
-                console.log(info[i].id + " === " +id) 
+    async function editar(id, produto, valor, quantidade) {
+        const info = await obterItem("@info");
+        for (let i = 0; i < info.length; i++) {
 
 
-                if (info[i].id === id) {
-                    
-                    info[i].produto = produto;
-                    info[i].valor = Number(valor);
-                    info[i].quantidade = Number(quantidade);
+
+            if (info[i].id === id) {
+
+                const item = { produto: produto, valor: Number(valor), quantidade: Number(quantidade) }
 
 
-                    // await salvarItem("@info", info)
-                    defLista(info)
-                    await carregar();
-                    await calcularTotal()
 
-                }
+                const dadosEditados = await editarItem("@info", id, item)
+                defLista(dadosEditados)
+                await carregar();
+                await calcularTotal()
+
             }
+        }
 
     }
 
@@ -127,9 +124,7 @@ export default function Index() {
     return (
         <View style={styles.conteiner} >
 
-            <StatusBar
-            
-            />
+            <StatusBar barStyle="white-content" translucent={true} backgroundColor="#D24343" />
 
             <View style={styles.conteinerHeader}>
                 <View style={styles.logo} >
